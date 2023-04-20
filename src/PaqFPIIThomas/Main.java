@@ -1,4 +1,6 @@
 package PaqFPIIThomas;
+// This class only exist to test the code, outside the GUI
+// And the code is working :)
 
 public class Main {
 

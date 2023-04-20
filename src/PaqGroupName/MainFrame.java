@@ -7,26 +7,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainFrame {
+    private JTextField tfIDNumber; // Text field for input of Id
+    private JComboBox cbCountry; // Combo Box to choose the country
+    private JTextField tfWeight; // Text field for the weight of the container
+    private JRadioButton btnPriority1; // Radio button to select priority 1
+    private JRadioButton btnPriority2; // Radio button to select priority 2
+    private JRadioButton btnPriority3; // Radio button to select priority 3
+    private JTextArea descriptionIsShowHereTextArea; // The description of the container will be writing in this Text Area
+    private JTextArea stateInHubPlanTextArea; // Text Area for showing the state of the container in the Hub plan
+    private JTextField tfRemitentCompany; // In this text field we will write the sender company of the container
+    private JTextField tfReceiverCompany; // In this text field we will write the receiver company of the container
+    private JButton pileButton; // This button is used to stack the container to the Hub, we need to verify that every information have been filled
+    private JButton unpileButton; // This button is used to remove a container from the Hub, we pass the Column number as a parameter
+    private JButton showContainerDescriptionButton; // This button allow us to display in 'showContainerDescriptionHereTextArea' the description of a container
+    private JButton numberOfContainersButton; // This button use 'cbNumberOfContainerFromACountry' combo box for displaying in 'tfHowMuchContainerACountryHave' the number of container by a country.
+    private JCheckBox checkBoxCustomInspection; // is the container have been inspected
+    private JTextField columnNumberTextField; // In this text Field we write the number of the column where we want to remove a container
+    private JTextArea showContainerDescriptionHereTextArea; // the description of a container will be display here
+    private JComboBox cbNumberOfContainerFromACountry; // The combo box to choose the country, as a parameter for the action of button 'numberOfContainersButton'
+    private JTextField tfHowMuchContainerACountryHave; // This text field will be display the number of container by a specific country.
     private JPanel mainPanel;
-    private JTextField tfIDNumber;
-    private JComboBox<String> cbCountry;
-    private JTextField tfWeight;
-    private JRadioButton btnPriority1;
-    private JRadioButton btnPriority2;
-    private JRadioButton btnPriority3;
-    private JTextArea descriptionIsShowHereTextArea;
-    private JTextArea stateInHubPlanTextArea;
-    private JTextField tfRemitentCompany;
-    private JTextField tfReceiverCompany;
-    private JButton pileButton;
-    private JButton unpileButton;
-    private JButton showContainerDescriptionButton;
-    private JButton numberOfContainersButton;
-    private JCheckBox checkBoxCustomInspection;
-    private JTextField columnNumberTextField;
-    private JTextArea showContainerDescriptionHereTextArea;
-    private JComboBox<String> cbNumberOfContainerFromACountry;
-    private JTextField tfHowMuchContainerACountryHave;
+
 
     private final Map<String, Integer> containerCountByCountry;
 
@@ -206,44 +207,6 @@ public class MainFrame {
             }
         }
     }
-
-    /*private void stackContainer() {
-        String idNumber = tfIDNumber.getText();
-        String country = (String) cbCountry.getSelectedItem();
-        int weight = Integer.parseInt(tfWeight.getText());
-        int priority = getSelectedPriority();
-        String remitentCompany = tfRemitentCompany.getText();
-        String receiverCompany = tfReceiverCompany.getText();
-        boolean customInspection = checkBoxCustomInspection.isSelected();
-
-        Container container = new Container(idNumber, country, weight, priority, remitentCompany,
-                receiverCompany, customInspection);
-
-        int count = containerCountByCountry.getOrDefault(country, 0);
-        containerCountByCountry.put(country, count + 1);
-
-        String columnText = JOptionPane.showInputDialog(mainPanel, "Enter the column number to stack the container in.");
-        int column = Integer.parseInt(columnText);
-
-        if (column >= 1 && column <= ContainerShip.NUM_COLUMNS) {
-            ContainerShip.getInstance().stackContainer(container, column);
-            stateInHubPlanTextArea.setText(ContainerShip.getInstance().toString());
-            updateNumberOfContainers();
-            clearContainerFields();
-        } else {
-            JOptionPane.showMessageDialog(mainPanel, "Please enter a valid column number.");
-        }
-    }
-
-    private void removeContainer(int column) {
-        try {
-            ContainerShip.getInstance().removeContainer(column);
-            stateInHubPlanTextArea.setText(ContainerShip.getInstance().toString());
-            updateNumberOfContainers();
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(mainPanel, e.getMessage());
-        }
-    }*/
 
     private String generateDescription(String idNumber, String country, int weight, int priority,
                                        String remittentCompany, String receiverCompany, boolean customInspection) {
