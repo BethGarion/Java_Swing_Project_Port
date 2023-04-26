@@ -33,6 +33,7 @@ public class MainFrame extends JFrame{
     public MainFrame(Hub hub) {
 
         setContentPane(mainPanel);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Port Management");
         setSize(1000,500);
         setVisible(true);
@@ -63,6 +64,8 @@ public class MainFrame extends JFrame{
             }
         });
 
+        // Button to show how much container are in the hub from a specific country
+        // Try catch need to be done here
         numberOfContainersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,27 +73,47 @@ public class MainFrame extends JFrame{
             }
         });
 
+        // Button to Add a new Container, management of exception done
         pileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int priority;
-                if(btnPriority1.isSelected()){priority=1;} else if (btnPriority2.isSelected()) {priority=2;} else {priority=3;}
-                Container Current = new Container(
-                        Integer.valueOf(tfIDNumber.getText()),
-                        Integer.valueOf(tfWeight.getText()),
-                        (String) cbCountry.getSelectedItem(),
-                        checkBoxCustomInspection.isSelected(),
-                        priority,
-                        descriptionIsShowHereTextArea.getText(),
-                        tfRemittentCompany.getText(),
-                        tfReceiverCompany.getText()
-                );
-                port.stackContainer(Current);
-                clearContainerFields();
-                JOptionPane.showMessageDialog(mainPanel, "Container added to stack.");
+                try {
+                    int priority;
+                    if(btnPriority1.isSelected()) {
+                        priority=1;
+                    } else if (btnPriority2.isSelected()) {
+                        priority=2;
+                    } else if (btnPriority3.isSelected()) {
+                        priority=3;
+                    } else {
+                        throw new Exception("Please select a priority level.");
+                    }
+                    Container Current = new Container(
+                            Integer.valueOf(tfIDNumber.getText()),
+                            Integer.valueOf(tfWeight.getText()),
+                            (String) cbCountry.getSelectedItem(),
+                            checkBoxCustomInspection.isSelected(),
+                            priority,
+                            descriptionIsShowHereTextArea.getText(),
+                            tfRemittentCompany.getText(),
+                            tfReceiverCompany.getText()
+                    );
+                    if (tfRemittentCompany.getText().equals("") || tfReceiverCompany.getText().equals("")) {
+                        throw new Exception("Please enter values for Remittent Company and Receiver Company.");
+                    }
+                    port.stackContainer(Current);
+                    clearContainerFields();
+                    JOptionPane.showMessageDialog(mainPanel, "Container added to stack.");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(mainPanel, "Please enter valid numbers for ID number and weight.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage());
+                }
             }
         });
 
+
+        // Button to remove a container from the hub, using the input row and column
         unpileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,15 +136,11 @@ public class MainFrame extends JFrame{
             }
         });
 
+        // Show us the description of 1 container based on the ID number of the container
         showContainerDescriptionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //try{
 
-                //} catch (NumberFormatException exception) {
-                 //   System.out.println("Error with : " + exception +  " ZEnter a valid ID (integer).");
-
-                //}
                 String idNumber = tfIDNumber.getText();
                 String country = (String) cbCountry.getSelectedItem();
                 int weight = Integer.parseInt(tfWeight.getText());
