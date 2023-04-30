@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="20" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1133" height="599"/>
+      <xy x="20" y="20" width="1211" height="599"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -108,7 +108,7 @@
       </component>
       <component id="ee224" class="javax.swing.JTextArea" binding="stateInHubPlanTextArea">
         <constraints>
-          <grid row="4" column="6" row-span="8" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="6" column="6" row-span="6" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
@@ -309,16 +309,6 @@
           <text value="State (hub plan)"/>
         </properties>
       </component>
-      <component id="c3805" class="javax.swing.JTextField" binding="rowOfContainerToRemoveTextField">
-        <constraints>
-          <grid row="15" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Row"/>
-        </properties>
-      </component>
       <component id="6ec33" class="javax.swing.JTextField" binding="enterIDOfContainerTextField" default-binding="true">
         <constraints>
           <grid row="16" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -337,9 +327,33 @@
           <text value="Show Container description"/>
         </properties>
       </component>
+      <component id="5f3d6" class="javax.swing.JRadioButton" binding="firstHubRadioButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="First Hub"/>
+        </properties>
+      </component>
+      <component id="d6232" class="javax.swing.JRadioButton" binding="secondHubRadioButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Second Hub"/>
+        </properties>
+      </component>
+      <component id="2ca7d" class="javax.swing.JRadioButton" binding="thirdHubRadioButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Third Hub"/>
+        </properties>
+      </component>
       <component id="8ce8" class="javax.swing.JTextField" binding="columnOfContainerToRemoveTextField">
         <constraints>
-          <grid row="15" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="15" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -354,6 +368,11 @@
       <member id="3f9b9"/>
       <member id="7a05c"/>
       <member id="7861e"/>
+    </group>
+    <group name="HubSelection">
+      <member id="5f3d6"/>
+      <member id="d6232"/>
+      <member id="2ca7d"/>
     </group>
   </buttonGroups>
 </form>

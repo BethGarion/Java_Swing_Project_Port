@@ -3,7 +3,6 @@ package PaqFPIIThomas;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class MainFrame extends JFrame{
     private JTextField tfIDNumber; // Text field for input of Id
@@ -25,12 +24,15 @@ public class MainFrame extends JFrame{
     private JComboBox cbNumberOfContainerFromACountry; // The combo box to choose the country, as a parameter for the action of button 'numberOfContainersButton'
     private JTextField tfHowMuchContainerACountryHave; // This text field will be display the number of container by a specific country.
     private JPanel mainPanel;
-    private JTextField rowOfContainerToRemoveTextField;
     private JTextField enterIDOfContainerTextField;
     private JTextField columnOfContainerToRemoveTextField;
+    private JRadioButton firstHubRadioButton;
+    private JRadioButton secondHubRadioButton;
+    private JRadioButton thirdHubRadioButton;
+    static int selectedHub;
 
 
-    public MainFrame(Hub hub) {
+    public MainFrame() {
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -38,8 +40,15 @@ public class MainFrame extends JFrame{
         setSize(1000,500);
         setVisible(true);
 
-        Port port = new Port();
+        Hub firstHub = new Hub();
+        Hub secondHub = new Hub();
+        Hub thirdHub = new Hub();
 
+        Port port = new Port(firstHub, secondHub, thirdHub);
+        firstHubRadioButton.setSelected(true);
+
+        // We add a few country to the country selection combo box
+        cbCountry.addItem("Select a country");
         cbCountry.addItem("France");
         cbCountry.addItem("Spain");
         cbCountry.addItem("Germany");
@@ -47,7 +56,7 @@ public class MainFrame extends JFrame{
         cbCountry.addItem("USA");
         cbCountry.addItem("Canada");
         cbCountry.addItem("Mexico");
-
+        cbCountry.addItem("Uruguay");
 
         cbNumberOfContainerFromACountry.addItem("France");
         cbNumberOfContainerFromACountry.addItem("Spain");
@@ -56,28 +65,15 @@ public class MainFrame extends JFrame{
         cbNumberOfContainerFromACountry.addItem("USA");
         cbNumberOfContainerFromACountry.addItem("Canada");
         cbNumberOfContainerFromACountry.addItem("Mexico");
+        cbNumberOfContainerFromACountry.addItem("Uruguay");
 
-
-        cbCountry.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-
-        // Button to show how much container are in the hub from a specific country
-        // Try catch need to be done here
-        numberOfContainersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                port.getQuantityOfContainersFromCountry((String) cbNumberOfContainerFromACountry.getSelectedItem());
-            }
-        });
 
         // Button to Add a new Container, management of exception done
         pileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    // First I deal with the priority
                     int priority;
                     if(btnPriority1.isSelected()) {
                         priority=1;
@@ -88,6 +84,35 @@ public class MainFrame extends JFrame{
                     } else {
                         throw new Exception("Please select a priority level.");
                     }
+
+                    //Checking which hub is selected
+                    if(firstHubRadioButton.isSelected()){
+                        selectedHub = 0;
+                    } else if (secondHubRadioButton.isSelected()) {
+                        selectedHub = 1;
+                    }else if (thirdHubRadioButton.isSelected()){
+                        selectedHub = 2;
+                    }
+
+                    // Then I check if these field text have been filled
+                    if (tfRemittentCompany.getText().equals("") || tfReceiverCompany.getText().equals("")) {
+                        throw new Exception("Please enter values for Remittent Company and Receiver Company.");
+                    }
+
+                    // Then I check if a country have been chosen
+                    if (cbCountry.getSelectedItem().equals("Select a country")) {
+                        throw new Exception("Please select a country.");
+                    }
+
+                    // I reuse the 'findContainerById' method to see if the user set a new ID, and do not try to use an ID already used
+                    String verifyID;
+                    verifyID = port.allTheHubs[selectedHub].findContainerById(Integer.parseInt(tfIDNumber.getText()), 2);
+
+                    if (verifyID == "Wait that illegal, this ID looks like an already used ID.") {
+                        throw new Exception("Please enter an ID which has not already been used.");
+                    }
+
+                    // I create a new container Object and I use the field of my GUI to fill the parameter of my constructor
                     Container Current = new Container(
                             Integer.valueOf(tfIDNumber.getText()),
                             Integer.valueOf(tfWeight.getText()),
@@ -98,12 +123,18 @@ public class MainFrame extends JFrame{
                             tfRemittentCompany.getText(),
                             tfReceiverCompany.getText()
                     );
-                    if (tfRemittentCompany.getText().equals("") || tfReceiverCompany.getText().equals("")) {
-                        throw new Exception("Please enter values for Remittent Company and Receiver Company.");
-                    }
-                    port.stackContainer(Current);
-                    clearContainerFields();
+
+                    // I add the container, with the checkAvailable who will check if Hub is not full
+                    // Then the checkAvailable method will call stackContainer method in Hub
+                    port.checkAvailable(Current);
+                    // I can use the following method to reset the field, but for testing it's not practical
+                    //clearContainerFields();
+
+                    // Now I refresh the state of the Hub in the Hub plan display
+                    stateInHubPlanTextArea.setText(port.allTheHubs[selectedHub].hubDisplay());
+
                     JOptionPane.showMessageDialog(mainPanel, "Container added to stack.");
+
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(mainPanel, "Please enter valid numbers for ID number and weight.");
                 } catch (Exception ex) {
@@ -117,21 +148,28 @@ public class MainFrame extends JFrame{
         unpileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = Integer.valueOf(rowOfContainerToRemoveTextField.getText());
-                int column = Integer.valueOf(columnOfContainerToRemoveTextField.getText());
+                try {
 
-                ArrayList<Container> containers = hub.getContainers();
-                Container[][] storage = hub.getStorage();
+                    //Checking which hub is selected
+                    if(firstHubRadioButton.isSelected()){
+                        selectedHub = 0;
+                    } else if (secondHubRadioButton.isSelected()) {
+                        selectedHub = 1;
+                    }else if (thirdHubRadioButton.isSelected()){
+                        selectedHub = 2;
+                    }
 
-                // Find the container in the stack and remove it
-                for (int i = 0; i < storage[0].length; i++) {
-                    for (int j = 0; j < storage[0].length; j++)
-                        if (storage[i][j] != null) {
-                            port.removeContainer(row, column);
-                            JOptionPane.showMessageDialog(mainPanel, "Container removed from stack.");
-                        } else {
-                            JOptionPane.showMessageDialog(mainPanel, "There is no container in column " + column + " and row " + row + ".");
-                        }
+                    boolean removed = port.allTheHubs[selectedHub].removeContainer(Integer.parseInt(columnOfContainerToRemoveTextField.getText()));
+                    stateInHubPlanTextArea.setText(port.allTheHubs[selectedHub].hubDisplay());
+                    if (removed == true) {
+                        JOptionPane.showMessageDialog(mainPanel, "Container removed from stack.");
+                    } else {
+                        JOptionPane.showMessageDialog(mainPanel, "There is no container in this column.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(mainPanel, "Please enter valid numbers for column number.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage());
                 }
             }
         });
@@ -141,22 +179,62 @@ public class MainFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String idNumber = tfIDNumber.getText();
-                String country = (String) cbCountry.getSelectedItem();
-                int weight = Integer.parseInt(tfWeight.getText());
-                int priority = getSelectedPriority();
-                String remittentCompany = tfRemittentCompany.getText();
-                String receiverCompany = tfReceiverCompany.getText();
-                boolean customInspection = checkBoxCustomInspection.isSelected();
+                //Checking which hub is selected
+                if(firstHubRadioButton.isSelected()){
+                    selectedHub = 0;
+                } else if (secondHubRadioButton.isSelected()) {
+                    selectedHub = 1;
+                }else if (thirdHubRadioButton.isSelected()){
+                    selectedHub = 2;
+                }
 
-                String description = generateDescription(idNumber, country, weight, priority, remittentCompany,
-                        receiverCompany, customInspection);
-                showContainerDescriptionHereTextArea.setText(description);
+                String showDescription;
+                showDescription = port.allTheHubs[selectedHub].findContainerById(Integer.parseInt(enterIDOfContainerTextField.getText()), 1);
+                showContainerDescriptionHereTextArea.setText(showDescription);
+            }
+        });
+
+        // Button to show how much container are in the hub from a specific country
+        // Try catch need to be done here
+        numberOfContainersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int numberOfContainers = 0;
+                for(int c = 0; c < 3; c++) {
+                    numberOfContainers = numberOfContainers + port.allTheHubs[c].countContainersByCountry((String) cbNumberOfContainerFromACountry.getSelectedItem());
+                }
+                tfHowMuchContainerACountryHave.setText(String.valueOf(numberOfContainers));
+            }
+        });
+
+        // The 3 following button allow me to display the interface of the 3 different Hubs.
+        firstHubRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(firstHubRadioButton.isSelected()){
+                    stateInHubPlanTextArea.setText(port.allTheHubs[0].hubDisplay());
+                }
+            }
+        });
+        secondHubRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(secondHubRadioButton.isSelected()){
+                    stateInHubPlanTextArea.setText(port.allTheHubs[1].hubDisplay());
+                }
+            }
+        });
+        thirdHubRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(thirdHubRadioButton.isSelected()){
+                    stateInHubPlanTextArea.setText(port.allTheHubs[2].hubDisplay());
+                }
             }
         });
     }
 
-    private String generateDescription(String idNumber, String country, int weight, int priority,
+    /*private String generateDescription(String idNumber, String country, int weight, int priority,
                                        String remittentCompany, String receiverCompany, boolean customInspection) {
         StringBuilder sb = new StringBuilder();
         sb.append("Container ID: ").append(idNumber).append("\n");
@@ -168,42 +246,9 @@ public class MainFrame extends JFrame{
         sb.append("Custom Inspection: ").append(customInspection ? "Yes" : "No");
 
         return sb.toString();
-    }
+    }*/
 
-
-    private int getSelectedPriority() {
-        if (btnPriority1.isSelected()) {
-            return 1;
-        } else if (btnPriority2.isSelected()) {
-            return 2;
-        } else if (btnPriority3.isSelected()) {
-            return 3;
-        } else {
-            return 0;
-        }
-    }
-
-    private boolean validateContainer() {
-        String idNumber = tfIDNumber.getText();
-        String country = (String) cbCountry.getSelectedItem();
-        String weightText = tfWeight.getText();
-        String remittentCompany = tfRemittentCompany.getText();
-        String receiverCompany = tfReceiverCompany.getText();
-
-        if (idNumber.isEmpty() || country == null || weightText.isEmpty() || remittentCompany.isEmpty() ||
-                receiverCompany.isEmpty()) {
-            return false;
-        }
-
-        try {
-            Integer.parseInt(weightText);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-
-        return getSelectedPriority() != 0;
-    }
-
+    // I reset the field of each Text fields / text area. Can be usefully if I don't want the user to put the same information everywhere
     private void clearContainerFields() {
         tfIDNumber.setText("");
         cbCountry.setSelectedIndex(0);
@@ -214,11 +259,10 @@ public class MainFrame extends JFrame{
         tfRemittentCompany.setText("");
         tfReceiverCompany.setText("");
         checkBoxCustomInspection.setSelected(false);
-        showContainerDescriptionHereTextArea.setText("");
+        descriptionIsShowHereTextArea.setText("");
     }
 
     public static void main(String[] args) {
-        Hub hub = new Hub();
-        MainFrame PortManagement = new MainFrame(hub);
+        MainFrame PortManagement = new MainFrame();
     }
 }
