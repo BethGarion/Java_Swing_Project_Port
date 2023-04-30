@@ -1,7 +1,6 @@
 package PaqFPIIThomas;
 
 public class Port {
-    //private Hub hub;
     public Hub[] allTheHubs = new Hub[3];
 
     public Port(Hub firstHub, Hub secondHub, Hub thirdHub) {
@@ -18,7 +17,7 @@ public class Port {
         if(allTheHubs[0].stackContainer(container) == false){
             if(allTheHubs[1].stackContainer(container) == false){
                 if(allTheHubs[2].stackContainer(container) == false){
-                    System.out.println("Port is full");
+                    System.out.println("All the column of priority level" + container.getPriority() + " are full.");
                 }
             }
         }

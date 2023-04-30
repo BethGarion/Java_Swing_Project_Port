@@ -1,6 +1,7 @@
 package PaqFPIIThomas;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,6 +30,7 @@ public class MainFrame extends JFrame{
     private JRadioButton firstHubRadioButton;
     private JRadioButton secondHubRadioButton;
     private JRadioButton thirdHubRadioButton;
+    private JLabel companyLogo;
     static int selectedHub;
 
 
@@ -37,8 +39,9 @@ public class MainFrame extends JFrame{
         setContentPane(mainPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Port Management");
-        setSize(1000,500);
+        setSize(1500,800);
         setVisible(true);
+
 
         Hub firstHub = new Hub();
         Hub secondHub = new Hub();
@@ -234,20 +237,6 @@ public class MainFrame extends JFrame{
             }
         });
     }
-
-    /*private String generateDescription(String idNumber, String country, int weight, int priority,
-                                       String remittentCompany, String receiverCompany, boolean customInspection) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Container ID: ").append(idNumber).append("\n");
-        sb.append("Country: ").append(country).append("\n");
-        sb.append("Weight: ").append(weight).append("\n");
-        sb.append("Priority: ").append(priority).append("\n");
-        sb.append("Remittent Company: ").append(remittentCompany).append("\n");
-        sb.append("Receiver Company: ").append(receiverCompany).append("\n");
-        sb.append("Custom Inspection: ").append(customInspection ? "Yes" : "No");
-
-        return sb.toString();
-    }*/
 
     // I reset the field of each Text fields / text area. Can be usefully if I don't want the user to put the same information everywhere
     private void clearContainerFields() {
