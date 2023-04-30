@@ -26,8 +26,8 @@ public class Hub {
         }
     }
 
+    // I'm adding new container to the Hub, from bottom to the top.
     public boolean stackContainer(Container container) {
-        //Collocation of the container made from down to up and from left to right
         int priority = container.getPriority();
         for(int i = 0; i < COLUMNS; i++){
             for(int j = ROWS - 1; j >= 0; j--){
@@ -67,7 +67,7 @@ public class Hub {
 
 
     // This method allow me to get the content description AND to check if an ID have been already used
-    // If whatIWantToDo = 1 > we want the description of an container, if equal to 2 we want to compare 2 ID (with a specific return sentence that we use in the MainFrame.)
+    // If whatIWantToDo = 1 > we want the description of a container, if equal to 2 we want to compare 2 ID (with a specific return sentence that we use in the MainFrame.)
     public String findContainerById(int id, int whatIWantToDo) {
         String returnValue = "There is no container with this ID.";
         for (int i = 0; i < COLUMNS; i++) {
@@ -75,8 +75,13 @@ public class Hub {
                 if (storage[j][i] != null) {
                     if (storage[j][i].getId() == id) {
                         if (whatIWantToDo == 1) {
-                            returnValue = storage[i][j].getContentDescription();
-                            break;
+                            if(storage[j][i].getContentDescription() != null) {
+                                returnValue = storage[j][i].getContentDescription();
+                                break;
+                            } else {
+                                returnValue = "Unfortunately, there is no description for this container.";
+                                break;
+                            }
                         } else if (whatIWantToDo == 2) {
                             returnValue = "Wait that illegal, this ID looks like an already used ID.";
                         }
@@ -87,15 +92,16 @@ public class Hub {
         return returnValue;
     }
 
+    // This method use 'StringBuilder'
     public String hubDisplay(){
         // Allow me to display a plan of the Hub
         StringBuilder displayedHub = new StringBuilder();
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLUMNS; j++){
                 if(storage[i][j] != null){
-                    displayedHub.append("I ");
+                    displayedHub.append(" ■ ");
                 }else{
-                    displayedHub.append("X ");
+                    displayedHub.append(" □ ");
                 }
             }
             displayedHub.append("\n");
@@ -116,22 +122,5 @@ public class Hub {
                 }
             }
         return count;
-    }
-
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < storage.length; i++) {
-            for (int j = 0; j < storage[i].length; j++) {
-                if (storage[i][j] == null) {
-                    sb.append("[     ]");
-                } else {
-                    sb.append(storage[i][j]);
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 }

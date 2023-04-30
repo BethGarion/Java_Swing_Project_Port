@@ -92,20 +92,4 @@ public class Container {
     public String getReceiverCompany() {
         return receiverCompany;
     }
-
-    // METHODS
-
-    @Override
-    public String toString() {
-        return "Container{" +
-                "Id=" + Id +
-                ", Weight=" + weight +
-                ", Country Of Origin='" + countryOfOrigin + '\'' +
-                ", Inspected=" + inspected +
-                ", Priority=" + priority +
-                ", Content Description='" + contentDescription + '\'' +
-                ", Sender Company='" + senderCompany + '\'' +
-                ", Receiver Company='" + receiverCompany + '\'' +
-                '}';
-    }
 }

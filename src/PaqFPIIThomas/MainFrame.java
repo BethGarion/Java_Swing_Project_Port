@@ -168,8 +168,6 @@ public class MainFrame extends JFrame{
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(mainPanel, "Please enter valid numbers for column number.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage());
                 }
             }
         });
@@ -178,19 +176,22 @@ public class MainFrame extends JFrame{
         showContainerDescriptionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    //Checking which hub is selected
+                    if(firstHubRadioButton.isSelected()){
+                        selectedHub = 0;
+                    } else if (secondHubRadioButton.isSelected()) {
+                        selectedHub = 1;
+                    }else if (thirdHubRadioButton.isSelected()){
+                        selectedHub = 2;
+                    }
 
-                //Checking which hub is selected
-                if(firstHubRadioButton.isSelected()){
-                    selectedHub = 0;
-                } else if (secondHubRadioButton.isSelected()) {
-                    selectedHub = 1;
-                }else if (thirdHubRadioButton.isSelected()){
-                    selectedHub = 2;
+                    String showDescription;
+                    showDescription = port.allTheHubs[selectedHub].findContainerById(Integer.parseInt(enterIDOfContainerTextField.getText()), 1);
+                    showContainerDescriptionHereTextArea.setText(showDescription);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(mainPanel, "Please enter valid numbers for the ID.");
                 }
-
-                String showDescription;
-                showDescription = port.allTheHubs[selectedHub].findContainerById(Integer.parseInt(enterIDOfContainerTextField.getText()), 1);
-                showContainerDescriptionHereTextArea.setText(showDescription);
             }
         });
 
