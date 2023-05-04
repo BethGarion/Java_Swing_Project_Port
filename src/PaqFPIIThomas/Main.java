@@ -1,3 +1,4 @@
+// THOMAS PERRAULT
 package PaqFPIIThomas;
 // This class only exist to test the code, outside the GUI
 // And the code is working :)
@@ -30,6 +31,13 @@ public class Main {
 
         // Calculate the quantity of containers from a certain country
         System.out.println(port.getQuantityOfContainersFromCountry("USA")); // Should print 2*/
+
+        /*
+        Add a method that accepts as arguments a weight in tons and a Hub number:
+            a) mark as checked in customs all the containers that have a weight less or equal to the one passed as argument inside that hub
+            b) return as a String information about all the containers with weight less or equal to the last one as argument within that hub (only the container ID, the sender company, the weight and the customs check status will be shown).
+
+         */
 
     }
 }

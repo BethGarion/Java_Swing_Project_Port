@@ -1,3 +1,4 @@
+// THOMAS PERRAULT
 package PaqFPIIThomas;
 
 import java.util.ArrayList;
@@ -90,6 +91,25 @@ public class Hub {
             }
         }
         return returnValue;
+    }
+
+    // Exams exercise 1)
+    public String checkWeight(int weight) {
+        String returnValue = ""; // = "There is no container with weight less or equal to " + weight + ".";
+        for (int i = 0; i < COLUMNS; i++) {
+            for (int j = 0; j < ROWS; j++) {
+                if (storage[j][i] != null) {
+                    if (storage[j][i].getWeight() <= weight) {
+                        if(storage[j][i].getContentDescription() != null) {
+                            storage[j][i].setInspected(true);
+                            returnValue = returnValue + " This container have been inspected : \n - ID: " + String.valueOf(storage[j][i].getId() + " \n - Sender company : " + storage[j][i].getSenderCompany() + " \n - Weight : " + storage[j][i].getWeight() + " \n - Custom check status : " + storage[j][i].isInspected() + ". \n");
+                        }
+                    }
+                }
+            }
+        }
+        return returnValue;
+
     }
 
     // This method use 'StringBuilder'

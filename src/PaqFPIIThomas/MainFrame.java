@@ -1,3 +1,4 @@
+// THOMAS PERRAULT
 package PaqFPIIThomas;
 
 import javax.swing.*;
@@ -31,6 +32,9 @@ public class MainFrame extends JFrame{
     private JRadioButton secondHubRadioButton;
     private JRadioButton thirdHubRadioButton;
     private JLabel companyLogo;
+    private JButton examButton;
+    private JTextField tfWeightInput;
+    private JTextArea weightControltextArea;
     static int selectedHub;
 
 
@@ -108,12 +112,16 @@ public class MainFrame extends JFrame{
                     }
 
                     // I reuse the 'findContainerById' method to see if the user set a new ID, and do not try to use an ID already used
-                    String verifyID;
-                    verifyID = port.allTheHubs[selectedHub].findContainerById(Integer.parseInt(tfIDNumber.getText()), 2);
+                    for(int i = 0; i < 3; i++) {
+                        String verifyID;
+                        verifyID = port.allTheHubs[i].findContainerById(Integer.parseInt(tfIDNumber.getText()), 2);
 
-                    if (verifyID == "Wait that illegal, this ID looks like an already used ID.") {
-                        throw new Exception("Please enter an ID which has not already been used.");
+                        if (verifyID == "Wait that illegal, this ID looks like an already used ID.") {
+                            throw new Exception("Please enter an ID which has not already been used.");
+                        }
                     }
+
+
 
                     // I create a new container Object and I use the field of my GUI to fill the parameter of my constructor
                     Container Current = new Container(
@@ -208,6 +216,42 @@ public class MainFrame extends JFrame{
                     numberOfContainers = numberOfContainers + port.allTheHubs[c].countContainersByCountry((String) cbNumberOfContainerFromACountry.getSelectedItem());
                 }
                 tfHowMuchContainerACountryHave.setText(String.valueOf(numberOfContainers));
+            }
+        });
+
+        // I check the weight of all the container with a input weight (that I get from a text field)
+        // If i found container with weight less or equal to my input weight, i display their information (ID, sender company, weight, inspected) in a text area And a new windows
+        examButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    //Checking which hub is selected
+                    if(firstHubRadioButton.isSelected()){
+                        selectedHub = 0;
+                    } else if (secondHubRadioButton.isSelected()) {
+                        selectedHub = 1;
+                    }else if (thirdHubRadioButton.isSelected()){
+                        selectedHub = 2;
+                    }
+
+                    // I'm creating here the string who will be show, because my method return a string.
+                    String showInformation;
+                    showInformation = port.allTheHubs[selectedHub].checkWeight(Integer.parseInt(tfWeightInput.getText()));
+                    // Here I show my string in a text Area
+                    weightControltextArea.setText(showInformation);
+
+                    // And here I show my string in a new windows
+                    // I have a problem who is if i have too much container that windows disappear at the bottom of the screen
+                    // I should add a defined dimension and a scroll bar to the windows
+                    JScrollPane scrollPane = new JScrollPane(weightControltextArea);  // I add my scroll pane component
+                    scrollPane.setPreferredSize(new Dimension(400, 500)); // I set the dimension of my new window
+                    JOptionPane.showMessageDialog(mainPanel, scrollPane); // Now i show it
+                    //JOptionPane.showMessageDialog(mainPanel, showInformation); // I first use this, but I can not add a dimension or scroll bar
+
+                    // Management of exception for verified that the user input a valid number for the weight
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(mainPanel, "Please enter a valid weight number.");
+                }
             }
         });
 
